@@ -1,5 +1,5 @@
 ---
-TagFormat: "go(?P<major>[1-9])\.(?P<minor>[[:digit:]]+)\.(?P<patch>[[:digit:]]+)"
+TagFormat: 'go(?P<major>[1-9])\.(?P<minor>[[:digit:]]+)\.(?P<patch>[[:digit:]]+)'
 TagSemverFormat: ${major}.${minor}.${patch}
 Comparator: '0'
 BranchTemplate: feature/${major}.${minor}.${patch}
