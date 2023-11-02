@@ -1,21 +1,21 @@
 @Library('olcne-pipeline') _
 import com.oracle.olcne.pipeline.BranchPattern
 
-def skipPublish = {echo "Skipping publish"}
- 
 olcnePipeline(
         branchPattern: new BranchPattern(master: 'oracle/release/{{{.major}}}.{{{.minor}}}.{{{.patch}}}', feature: 'feature/.*'),
 	containers: ['container-registry.oracle.com/olcne/golang:v{{{.major}}}.{{{.minor}}}.{{{.patch}}}': 'olcne/golang:v{{{.major}}}.{{{.minor}}}.{{{.patch}}}'],
-	platforms: ['ol8', 'ol9'],
+	platforms: ['ol7', 'ol8', 'ol9'],
 	architectures: ['x86_64', 'aarch64'],
 	yumOL8Repos: ['ol8_appstream', 'ol8_codeready_builder'],
+	yumOL7Repos: ['ol7_optional_latest', 'ol7_addons', 'ol7_developer_golang119'],
         ol8ModulesToDisable: ['go-toolset:ol8'],
         ol8ModulesToEnable: ['go-toolset:ol8addon'],
         yumOL9Repos: ['ol9_appstream', 'ol9_codeready_builder'],
         customPlatformStages: [
           customPlatformSteps: [
-            ol8: [container: [enabled: false], publish: [enabled: false, method: skipPublish]],
-            ol9: [container: [enabled: false]],
+	    ol7: [container: [enabled: false], buildContainerRpms: [enabled: false]],
+            ol8: [container: [enabled: false], buildContainerRpms: [enabled: false]],
+            ol9: [container: [enabled: true], buildContainerRpms: [enabled: true]],
           ],
         ]
 )

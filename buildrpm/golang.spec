@@ -104,22 +104,22 @@ Source0:        %{name}-%{version}.tar.bz2
 
 # The compiler is written in Go. Needs go(1.4+) compiler for build.
 # Actual Go based bootstrap compiler provided by above source.
-%if !%{golang_bootstrap}
-BuildRequires:  gcc-go >= 5
-%else
-BuildRequires:  golang
-%endif
 # For OpenSSL FIPS
 BuildRequires:  openssl-devel
 # for tests
 BuildRequires:  pcre-devel, glibc-static, perl
 
-BuildRequires:  golang < 1.20.0
+BuildRequires:  golang >= 1.19.0
 BuildRequires:  make
 BuildRequires:  cmake
 BuildRequires:  clang
 BuildRequires:  rpm
 BuildRequires:  cpio
+
+%if 0%{?oraclelinux} == 7
+BuildRequires: libstdc++
+BuildRequires: libstdc++-static
+%endif
 
 Provides:       go = %{version}-%{release}
 Requires:       %{name}-bin = %{version}-%{release}
@@ -139,6 +139,8 @@ ExclusiveArch:  %{golang_arches}
 Source100:      golang-gdbinit
 Source101:      golang-prelink.conf
 Patch0:         build-goboring.sh.patch
+# A couple tests fail on OL7 due to ancient versions of their dependencies.
+Patch1:		disable-tests.patch
 
 %description
 %{summary}.
@@ -207,6 +209,9 @@ Summary:        Golang shared object libraries
 %prep
 %setup -q -n %{name}-%{version}
 %patch0
+%if 0%{?oraclelinux} == 7
+%patch1
+%endif
 
 
 %build
@@ -234,7 +239,11 @@ export GOHOSTARCH=%{gohostarch}
 # of boringssl
 mkdir boringssl-rpm
 pushd boringssl-rpm
+%if 0%{?oraclelinux} > 7
 dnf download boringssl-fips.20210429
+%else
+yumdownloader boringssl-fips.20210429
+%endif
 rpm2cpio boringssl*.rpm | cpio -idv
 popd
 
@@ -507,4 +516,4 @@ cd ..
 
 %changelog
 * {{{.changelog_timestamp}}} - {{{$version}}}-1
-- Initial files for golang
+- Adopt go {{{$version}}}
