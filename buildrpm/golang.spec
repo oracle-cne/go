@@ -140,7 +140,12 @@ Source100:      golang-gdbinit
 Source101:      golang-prelink.conf
 Patch0:         build-goboring.sh.patch
 # A couple tests fail on OL7 due to ancient versions of their dependencies.
+{{{- if semverCompare "<1.20.12" $version }}}
 Patch1:		disable-tests.patch
+{{{- else }}}
+Patch1:		disable-tests_1.21.patch
+Patch2:		disable-tests_1.22_ol7.patch
+{{{- end }}}
 
 %description
 %{summary}.
@@ -211,6 +216,9 @@ Summary:        Golang shared object libraries
 %patch0
 %if 0%{?oraclelinux} == 7
 %patch1
+{{{- if semverCompare ">=1.22.0" $version }}}
+%patch2
+{{{- end }}}
 %endif
 
 
@@ -321,6 +329,9 @@ cp -r boringssl-rpm/usr %{buildroot}/usr/lib/golang/src/boringssl
 # https://code.google.com/p/go/issues/detail?id=5830
 cp -apv api bin doc lib pkg src misc test VERSION \
    $RPM_BUILD_ROOT%{goroot}
+
+# Add go.env
+install -D -p -m 444 go.env $RPM_BUILD_ROOT%{goroot}
 
 # bz1099206
 find $RPM_BUILD_ROOT%{goroot}/src -exec touch -r $RPM_BUILD_ROOT%{goroot}/VERSION "{}" \;

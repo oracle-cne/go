@@ -3,7 +3,8 @@
 %{!?registry: %global registry container-registry.oracle.com/olcne}
 
 %global _name    golang
-%global rpm_name %{_name}-%{version}-%{release}.%{_build_arch}
+%global rpm_suffix %{version}-%{release}.%{_build_arch}
+%global noarch_suffix %{version}-%{release}.noarch
 %global docker_tag %{registry}/%{_name}:v%{version}
 
 # golang release version
@@ -29,10 +30,20 @@ The Go Programming Language
 
 %build
 yum clean all
-yumdownloader --destdir=${PWD}/rpms %{rpm_name}
-
-docker build --pull --build-arg https_proxy=${https_proxy} \
-        -t %{docker_tag} -f ./olm/builds/Dockerfile .
+yumdownloader --destdir=${PWD}/rpms \
+  golang-%{rpm_suffix} \
+  golang-bin-%{rpm_suffix} \
+  golang-misc-%{noarch_suffix} \
+  golang-docs-%{noarch_suffix} \
+  golang-src-%{noarch_suffix} \
+  golang-tests-%{noarch_suffix}
+%if 0%{?oraclelinux} == 9
+%global docker_file ./olm/builds/Dockerfile_ol9
+%else
+%global docker_file ./olm/builds/Dockerfile
+%endif
+docker build --network host --pull --build-arg https_proxy=${https_proxy} \
+        -t %{docker_tag} -f %{docker_file} .
 docker save -o %{_name}.tar %{docker_tag}
 
 %install
