@@ -139,13 +139,6 @@ ExclusiveArch:  %{golang_arches}
 Source100:      golang-gdbinit
 Source101:      golang-prelink.conf
 Patch0:         build-goboring.sh.patch
-# A couple tests fail on OL7 due to ancient versions of their dependencies.
-{{{- if semverCompare "<1.20.12" $version }}}
-Patch1:		disable-tests.patch
-{{{- else }}}
-Patch1:		disable-tests_1.21.patch
-Patch2:		disable-tests_1.22_ol7.patch
-{{{- end }}}
 
 %description
 %{summary}.
@@ -214,13 +207,6 @@ Summary:        Golang shared object libraries
 %prep
 %setup -q -n %{name}-%{version}
 %patch0
-%if 0%{?oraclelinux} == 7
-%patch1
-{{{- if semverCompare ">=1.22.0" $version }}}
-%patch2
-{{{- end }}}
-%endif
-
 
 %build
 set -xe
