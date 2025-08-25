@@ -6,4 +6,4 @@ BranchTemplate: feature/${major}.${minor}.${patch}
 MasterBranchTemplate: oracle/release/${major}.${minor}.${patch}
 TemplateDirectory: "${major}.${minor}"
 SemverTagFilter: ">= 1.21.3"
-InitScript: "olm/update-golangversion.sh ${minor} ${patch}"
+InitScript: "olm/update-golangversion.sh"

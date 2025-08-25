@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-TARGET_MINOR=$1
-PATCH_VERSION=$2
+TARGET_MINOR=${minor}
+PATCH_VERSION=${patch}
 
 if [[ "$PATCH_VERSION" -eq 0 ]]; then
   exit 0
