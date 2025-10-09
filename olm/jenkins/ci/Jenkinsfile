@@ -2,7 +2,7 @@
 import com.oracle.olcne.pipeline.BranchPattern
 
 olcnePipeline(
-        branchPattern: new BranchPattern(master: 'oracle/release/{{{.major}}}.{{{.minor}}}.{{{.patch}}}', feature: 'feature/.*'),
+        branchPattern: new BranchPattern(master: 'oracle/release/{{{.major}}}.{{{.minor}}}.{{{.patch}}}', feature: '(?!^oracle/release/$)(^.*$)'),
         customStages: [container: [enabled: false]],
 	platforms: ['ol8', 'ol9'],
 	architectures: ['x86_64', 'aarch64'],
