@@ -208,6 +208,16 @@ Summary:        Golang shared object libraries
 %setup -q -n %{name}-%{version}
 %patch0
 
+# OL8 uses a very old glibc that does not support the atomics
+# used in src/runtime/race/race_linux_arm64.syso.  Copy an
+# older version that does not use those symbols over top so
+# that it is compatible.
+%ifarch aarch64
+%if 0%{?oraclelinux} == 8
+cp %{buildroom}/olm/builds/race_linux_arm64.syso %{buildroot}/src/runtime/race/race_linux_arm64.syso
+%endif
+%endif
+
 %build
 set -xe
 # print out system information
