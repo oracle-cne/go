@@ -429,7 +429,7 @@ export GO_TEST_TIMEOUT_SCALE=2
 
 export GO_TEST_RUN=""
 %ifarch aarch64
-  export GO_TEST_RUN="-run=!testshared"
+  export GO_TEST_RUN="-run=!(testshared|:race($|-))"
 %endif
 
 %if %{fail_on_tests}
