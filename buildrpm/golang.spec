@@ -214,7 +214,7 @@ Summary:        Golang shared object libraries
 # that it is compatible.
 %ifarch aarch64
 %if 0%{?oraclelinux} == 8
-cp %{buildroot}/olm/builds/race_linux_arm64.syso %{buildroot}/src/runtime/race/race_linux_arm64.syso
+cp olm/builds/race_linux_arm64.syso src/runtime/race/race_linux_arm64.syso
 %endif
 %endif
 
